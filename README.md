@@ -59,17 +59,17 @@ A demonstration video of the platform in action is available here:
 
 ## 🛠️ Installation & Usage
 
-The platform is **static** and can be deployed on a web server supporting **HTTP Range Requests** (needed for multiresolution 3D streaming) **and PHP** (for saving/loading diagnostic data).
+The platform can be deployed on a web server supporting **HTTP Range Requests** (needed for multiresolution 3D streaming) **and PHP** (for saving/loading diagnostic data).
 
-### ✅ Recommended setup (Apache + PHP via XAMPP/MAMP/WAMP)
+### ✅ Local setup (Apache + PHP via XAMPP/MAMP/WAMP)
 1. Install **XAMPP** (or **MAMP/WAMP** depending on your OS) and start the **Apache** service.
 2. Clone the repository in inside the server’s document root:
-```bash
+```
 cd xampp\htdocs
 git clone https://github.com/cnr-isti-vclab/3DDDH.git
 ```
-4. Visit:
-```bash
+3. Visit:
+```
 http://localhost/3DDDH/
 ```
 
