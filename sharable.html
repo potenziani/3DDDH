@@ -1,0 +1,2275 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta content="charset=UTF-8"/>
+<title>3DHOP</title>
+
+<!--STYLESHEET-->
+<link type="text/css" rel="stylesheet" href="stylesheet/3dhop.css"/>
+<link type="text/css" rel="stylesheet" href="stylesheet/platform.css"/>
+<!--SPIDERGL-->
+<script type="text/javascript" src="js/spidergl.js"></script>
+<!--JQUERY-->
+<script type="text/javascript" src="js/jquery.js"></script>
+<!--PRESENTER-->
+<script type="text/javascript" src="js/presenter.js"></script>
+<!--3D MODELS LOADING AND RENDERING-->
+<script type="text/javascript" src="js/nexus.js"></script>
+<script type="text/javascript" src="js/ply.js"></script>
+<!--TRACKBALLS-->
+<script type="text/javascript" src="js/trackball_turntable.js"></script>
+<script type="text/javascript" src="js/trackball_turntable_pan.js"></script>
+<!--UTILITY-->
+<script type="text/javascript" src="js/init.js"></script>
+<script type="text/javascript" src="js/helpers.js"></script>
+<!--script type="text/javascript" src="js/nexus.monitor.js"></script-->
+<!--3D CUBE-->
+<link type="text/css" rel="stylesheet" href="stylesheet/3dcube.css"/>
+<!--BOOTSTRAP-->
+<link type="text/css" rel="stylesheet" href="stylesheet/bootstrap.min.css">
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+<!--BOOTSTRAP TOGGLE-->
+<link type="text/css" rel="stylesheet" href="stylesheet/bootstrap4-toggle.min.css">
+<script type="text/javascript" src="js/bootstrap4-toggle.min.js"></script>
+<!--TOASRT-->
+<link type="text/css" rel="stylesheet" href="stylesheet/toastr.min.css" rel="stylesheet"/>
+<script type="text/javascript" src="js/toastr.min.js"></script>
+
+</head>
+<body onresize="onPageResize()">
+
+<div class="h-100 container-fluid">
+<div class="h-100 row">
+
+<!--######LEFT######-->
+<div class="h-100 col-sm-9 border no-gutters p-0" style="background-image: url(skins/backgrounds/grey_gradient.jpg)">
+<div id="3dhop" class="tdhop" onmousedown="if (event.preventDefault) event.preventDefault()"><div id="tdhlg"></div>
+
+	<div id="toolbar">
+	<img id="home"        title="Home View"	             src="skins/dark/home.png"/><br/>
+	<img id="measure_on"  title="Disable Measure Tool"   src="skins/dark/measure_on.png" style="position:absolute; visibility:hidden;"/>
+	<img id="measure"     title="Enable Measure Tool"    src="skins/dark/measure.png"/><br/>
+	<img id="pick_on"     title="Disable PickPoint Tool" src="skins/dark/pick_on.png" style="position:absolute; visibility:hidden;"/>
+	<img id="pick"        title="Enable PickPoint Tool"  src="skins/dark/pick.png"/><br/>
+	<img id="sections_on" title="Disable Sections Tool"  src="skins/dark/sections_on.png" style="position:absolute; visibility:hidden;"/>
+	<img id="sections"    title="Enable Sections Tool"   src="skins/dark/sections.png"/><br/>
+	<img id="screenshot"  title="Save Screenshot"        src="skins/dark/screenshot.png"/><br/>
+	<img id="help"        title="Show Help"              src="skins/dark/help.png"        />
+	</div>
+
+<!--MEASURE-->
+ <div id="measure-box" class="output-box">Measured length<hr/><span id="measure-output" class="output-text" onmousedown="event.stopPropagation()">0.0</span></div>
+<!--MEASURE-->
+
+<!--POINT PICKING-->
+ <div id="pickpoint-box" class="output-box">XYZ picked point<hr/><span id="pickpoint-output" class="output-text" onmousedown="event.stopPropagation()">[ 0 , 0 , 0 ]</span></div>
+<!--POINT PICKING-->
+
+<!--SECTIONS-->
+ <div id="sections-box" class="output-box">
+  <table class="output-table" onmousedown="event.stopPropagation()">
+	<tr><td>Plane</td><td>Position</td><td>Flip</td></tr>
+	<tr>
+		<td><img   id="xplane_on"    title="Disable X Axis Section" src="skins/icons/sectionX_on.png" onclick="sectionxSwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+			<img   id="xplane"       title="Enable X Axis Section"  src="skins/icons/sectionX.png"  onclick="sectionxSwitch()"/><br/></td>
+		<td><input id="xplaneSlider" class="output-input"  type="range"    title="Move X Axis Section Position"/></td>
+		<td><input id="xplaneFlip"   class="output-input"  type="checkbox" title="Flip X Axis Section Direction"/></td></tr>
+	<tr>
+		<td><img   id="yplane_on"    title="Disable Y Axis Section" src="skins/icons/sectionY_on.png" onclick="sectionySwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+			<img   id="yplane"       title="Enable Y Axis Section"  src="skins/icons/sectionY.png"  onclick="sectionySwitch()"/><br/></td>
+		<td><input id="yplaneSlider" class="output-input"  type="range"    title="Move Y Axis Section Position"/></td>
+		<td><input id="yplaneFlip"   class="output-input"  type="checkbox" title="Flip Y Axis Section Direction"/></td></tr>
+	<tr>
+		<td><img   id="zplane_on"    title="Disable Z Axis Section" src="skins/icons/sectionZ_on.png" onclick="sectionzSwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+			<img   id="zplane"       title="Enable Z Axis Section"  src="skins/icons/sectionZ.png"  onclick="sectionzSwitch()"/><br/></td>
+		<td><input id="zplaneSlider" class="output-input"  type="range"    title="Move Y Axis Section Position"/></td>
+		<td><input id="zplaneFlip"   class="output-input"  type="checkbox" title="Flip Z Axis Section Direction"/></td></tr></table>
+  <table class="output-table" onmousedown="event.stopPropagation()" style="text-align:right;">
+	<tr>
+	 <td>Show planes<input id="showPlane" class="output-input" type="checkbox" title="Show Section Planes" style="bottom:-3px;"/></td>
+	 <td>Show edges<input  id="showBorder" class="output-input" type="checkbox" title="Show Section Edges" style="bottom:-3px;"/></td></tr></table>
+ </div>
+<!--SECTIONS-->
+
+<!--3D CUBE-->
+<div style="position:absolute; top:0px; right:0px;">
+<div class="cubeScene">
+  <div class="cube">
+    <div class="cube__face cube__face--front" onclick="viewFrom('front');">FRONT</div>
+    <div class="cube__face cube__face--back" onclick="viewFrom('back');">BACK</div>
+    <div class="cube__face cube__face--right" onclick="viewFrom('right');">RIGHT</div>
+    <div class="cube__face cube__face--left" onclick="viewFrom('left');">LEFT</div>
+    <div class="cube__face cube__face--top" onclick="viewFrom('top');">TOP</div>
+    <div class="cube__face cube__face--bottom" onclick="viewFrom('bottom');">BOTTOM</div>
+  </div>
+</div>
+</div>
+<!--3D CUBE-->
+
+<canvas id="draw-canvas"></canvas>
+
+</div>
+</div>
+<!--######LEFT######-->
+
+<!--######RIGHT######-->
+<div id="right_column" class="h-100 col-sm-3 border no-gutters justify-content-center overflow-hidden" style="background-color:silver">
+
+<!-- name -->
+<div id="rr1" class="row border justify-content-center" style="background-color:silver">
+<div class="col-sm-12 px-0 py-2" style="text-align:center">
+	<span id="sp_objDetails"></span>
+</div>
+</div>
+<!-- name -->
+
+<!-- home & canonical views -->
+<!--div id="rr2" class="row my-0 border" style="background-color:silver">
+<div class="col-sm-1 p-1">
+	<img src='./media/restore.png' width='30px' height="30px" style="cursor:hand;" data-toggle="tooltip" data-placement="top" title="Reset Position" onClick="home()"/>
+</div>
+<div class="col-sm-11 p-1"  style="text-align:center">
+<center>
+<table>
+<tr><td></td><td><button class="btn btn-secondary side" onclick="viewFrom('top');">TOP</button></td><td></td><td></td></tr>
+<tr><td><button class="btn btn-secondary side" onclick="viewFrom('left');">LEFT</button></td><td><button class="btn btn-secondary side" onclick="viewFrom('front');">FRONT</button></td><td><button class="btn btn-secondary side" onclick="viewFrom('right');">RIGHT</button></td><td><button class="btn btn-secondary side" onclick="viewFrom('back');">BACK</button></td></tr>
+<tr><td></td><td><button class="btn btn-secondary side" onclick="viewFrom('bottom');">BOTTOM</button></td><td></td><td></td></tr> 
+</table>
+</center>
+</div>
+</div-->
+<!-- home & canonical views -->
+
+<!-- light & rendermodes -->
+<div id="rr3" class="row my-0 border" style="position:relative; background-color:silver">
+<div class="col-sm-1 p-1">
+	<img src='./media/restore.png' width='30px' height="30px" style="cursor:hand;" data-toggle="tooltip" data-placement="top" title="Reset Rendering" onClick="resetViewState()"/>
+</div>
+<div class="col-sm-5 p-1 d-flex align-items-center justify-content-center">
+	<div><canvas id="lightcontroller_canvas" width="125" height="125" style="cursor:hand;"/></div>
+</div>
+<div class="col-sm-6 p-1" style="text-align:center">
+<center>
+<table>
+<tr><td><input id="i_solidColor" type="checkbox" data-toggle="toggle" data-width="125" data-onstyle="secondary" data-offstyle="secondary" data-on="Plain Color" data-off="Texture" onchange="updateViewState('solid',this.checked);"/></td></tr>
+<!--tr><td><input id="i_transparency" type="checkbox" data-toggle="toggle" data-width="125" data-onstyle="secondary" data-offstyle="secondary" data-on="Transparent" data-off="Solid" onchange="updateViewState('transparency',this.checked);"/></td></tr-->
+<tr><td><input id="i_transparency" type="checkbox" data-toggle="toggle" data-width="125" data-onstyle="secondary" data-offstyle="secondary" data-on="Transparent" data-off="Solid" onchange="updateViewState('transparency',this.checked);"/></td></tr>
+<tr><td><input id="i_useLighting" checked type="checkbox" data-toggle="toggle" data-width="125" data-onstyle="secondary" data-offstyle="secondary" data-on="Lighting" data-off="No Lighting" onchange="updateViewState('lighting',this.checked);"/></td></tr>
+<tr><td><input id="i_useCulling" checked type="checkbox" data-toggle="toggle" data-width="125" data-onstyle="secondary" data-offstyle="secondary" data-on="Culling" data-off="No Culling" onchange="updateViewState('culling',this.checked);"/></td></tr>
+</table>
+</center>
+</div>
+</div>
+<!-- light & rendermodes -->
+
+<!-- Other controls -->
+<div id="rr4" class="row my-0 border" style="background-color:silver">
+<div class="col-sm-12 p-1 d-flex align-items-center justify-content-center">
+	<label class="checkcontainer">Ortho View
+		<input id="i_ortho" type="checkbox" onclick="if(this.checked) presenter.setCameraOrthographic(); else presenter.setCameraPerspective();">
+		<span class="checkmark"></span>
+	</label>
+	<label class="checkcontainer">Base Grid
+		<input id="i_grid"  type="checkbox" onclick="if(this.checked) addGrid(); else removeGrid();">
+		<span class="checkmark"></span>
+	</label>
+	<label class="checkcontainer">XYZ Axes
+		<input id="i_axes"  type="checkbox" onclick="if(this.checked) addAxes(); else removeAxes();">
+		<span class="checkmark"></span>
+	</label>
+</div>
+</div>
+<!-- Other controls -->
+
+<!-- Data -->
+<div id="rr6" class="row my-0 border" style="background-color:silver; max-height: 600px; overflow:auto">
+<div class="col-sm-12 p-1">
+
+	<ul class="nav nav-tabs" id="myTabs" role="tablist" style="position: sticky; top: 0; z-index: 100; background-color: silver;">
+		<li class="nav-item">
+			<a class="nav-link active" id="spots-tab" data-toggle="tab" href="#panel_spots" role="tab">Diagnostics</a>
+		</li>	
+		<li class="nav-item">
+			<a class="nav-link" id="data-tab" data-toggle="tab" href="#panel_data" role="tab">Data</a>
+	  	</li>
+	  	<li class="nav-item">
+			<a class="nav-link" id="notes-tab" data-toggle="tab" href="#panel_notes" role="tab">Notes</a>
+	  	</li>
+	  	<!--li class="nav-item">
+			<a class="nav-link" id="views-tab" data-toggle="tab" href="#panel_views" role="tab">Views</a>
+	  	</li-->  
+	</ul>
+	<div class="tab-content" id="myTabsContent">
+		<div class="tab-pane fade show active" id="panel_spots" role="tabpanel">spots</div>
+		<div class="tab-pane fade" id="panel_data" role="tabpanel">
+			<div class="p-1 m-0 align-items-left w-100">
+				<div class="text-center m-3">
+					<h6>No data available</h6>
+				</div>						
+			</div>
+		</div>
+	  	<div class="tab-pane fade" id="panel_notes" role="tabpanel">notes</div>
+	  	<!--div class="tab-pane fade" id="panel_views" role="tabpanel"><h2>views</h2></div-->
+	</div>
+
+</div>
+</div>
+<!-- Data -->
+
+</div>
+<!--######RIGHT######-->
+
+<!--######MODAL HELP######-->
+<div class="modal fade" id="helpPanel" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Help</h5>
+		<img src="./media/info_w.png" width="30px" class="mb-3">
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <h6>Controls</h6>
+        </div>
+        <div class="mt-3">
+          <div class="row mb-2">
+            <div class="col-6"><h6>Left Mouse Button + Move</h6></div>
+            <div class="col-6"><span class="text-muted">Rotate 3D Model</span></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-6"><h6>Right Mouse Button + Move</h6></div>
+            <div class="col-6"><span class="text-muted">Pan 3D Model</span></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-6"><h6>Mouse Wheel</h6></div>
+            <div class="col-6"><span class="text-muted">Zoom In/Out</span></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-6"><h6>Double Click</h6></div>
+            <div class="col-6"><span class="text-muted">Center On The Clicked Point</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--######MODAL HELP######-->
+
+<!--######MODAL SPOT EDIT######-->
+<div class="modal fade" id="spotEditPanel" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" style="cursor:default;">Edit</h5>
+		<img src="./media/edit_w.png" width="24px" class="mb-3">
+      </div>
+      <div class="modal-body">	
+		<!--div class="text-center">
+          <h6>...</h6>
+        </div-->
+		<div class="form-group">
+			<label><h6>Title</h6></label>
+			<input name="title" type="text" class="form-control form-control-sm" oninput="updateSpotTitle(selectedSpot, this.value); updateDataPanelDropdown(selectedSpot, this.value);" title="Title"></input>
+		</div>
+
+		<div class="form-group">
+			<label><h6>Text</h6></label>
+			<textarea 
+				name="text" 
+				title="Text"
+				class="form-control form-control-sm auto-resize" 
+				rows="2" 
+				style="resize: none; overflow: hidden;" 
+				oninput="resizeTextarea(this); updateSpotText(selectedSpot, this.value);"></textarea>	
+		</div>
+
+		<div class="form-group row">
+			<label class="col-1"><h6>Size</h6></label>
+			<div class="col-2">
+				<input name="radius" type='number' class="form-control form-control-sm" min='1' max='9' step='1' onchange='updateSpotRadius(selectedSpot, this.value/10);' title='Radius'/>
+			</div>
+
+			<label class="col-1"><h6>Color</h6></label>
+			<div class="col-2">
+				<input name="color" type='color' class="form-control form-control-sm" style='cursor:hand; margin-left:10px' onchange='updateSpotColor(selectedSpot, this.value);' title='Color'>
+			</div>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="fillSpotsPanel();">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--######MODAL SPOT EDIT######-->
+
+<!--######MODAL SPOT CONFIG######-->
+<div class="modal fade" id="spotConfigPanel" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document" style="height: 90vh; max-height: 90vh;">
+    <div class="modal-content h-100 d-flex flex-column">
+      <div class="modal-header bg-primary text-white flex-shrink-0">
+        <h5 class="modal-title" style="cursor:default;">Data Configuration</h5>
+        <img src="./media/gear_w.png" width="24px" class="mb-3">
+      </div>
+      <div class="modal-body flex-grow-1 d-flex flex-column p-1" id="spotConfigPanelContent" style="overflow: hidden;">
+      </div>	  
+      <div class="modal-footer flex-shrink-0">
+		<button type="button" class="btn btn-success" id="confirmDataBtn" onclick="updateSpotData(selectedSpot); $('#spotConfigPanel').modal('hide');">Apply</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--######MODAL SPOT CONFIG######-->
+
+<!--######MODAL SPOT DELETE######-->
+<div class="modal fade" id="spotDeletePanel" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirm Delete</h5>
+		<img src="./media/delete_w.png" width="30px" class="mb-3">
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <h6>Are you sure you want to delete this diagnostic?</h6>
+          <p class="text-muted">This action cannot be undone</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="deleteSpot(selectedSpot); $('#spotDeletePanel').modal('hide');">Delete</button>		
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--######MODAL SPOT DELETE######-->
+
+<!--######MODAL IMAGE VIEWER######-->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageViewerTitle">Image Viewer</h5>
+		<img src="./media/photos.png" width="30px" class="mb-3">
+      </div>
+      <div class="modal-body text-center p-0">
+        <img id="imageViewerImg" src="" class="img-fluid p-5" style="max-width: 100%; max-height: 80vh;" alt="Full Resolution Image">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--######MODAL IMAGE VIEWER######-->
+
+</div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+//--INITIALIZATION--
+var	objCode = getObjCodeFromURL();
+var	progTitle = getProgTitleFromURL();
+var	progSubtitle = getProgSubtitleFromURL();
+
+var OBJECT_ANNOTATION = {
+	"objectID" : null,
+	"notes" : "",
+	"views" : {},
+	"spots" : {},
+	"newIndex" : 1,
+};
+var VIEW_STATE = {
+	"solid" : false,
+	"transparency" : false,
+	"lighting" : true,
+	"culling" : true,
+	"lightDir" : [-0.17,-0.17],
+};
+var SPOT_DATA = {
+    "ID": "",
+    "name": "",
+    "tabs": {}	
+};
+const DEFAULT_VIEW_STATE = {...VIEW_STATE}; // copy of the default view state 
+const DEFAULT_STARTING_DISTANCE = 1.5;
+
+var IS_EDITING = false;
+var presenter = null;
+var selectedSpot = null;
+//--INITIALIZATION--
+
+//--SCENE SETUP--
+function setup3dhop() { 
+
+	var myScene = {
+		meshes: {
+			"mesh" : { url: "" },
+			"sphere" : { url: "models/sphere.ply" }
+		},
+		modelInstances : {
+			"model_instance" : {
+				mesh : "mesh",
+				color : [0.5, 0.5, 0.5],
+				backfaceColor : [0.7, 0.4, 0.4, 2.0],
+				specularColor : [0.0, 0.0, 0.0, 256.0],
+				tags : ["MAIN"]
+			}
+		},
+		spots: {
+		},
+		trackball: { 
+			type : TurntablePanTrackball,
+			trackOptions : {
+				startPhi: 0.0,
+				startTheta: 0.0,
+				startDistance: DEFAULT_STARTING_DISTANCE,
+				minMaxPhi: [-180, 180],
+				minMaxTheta: [-90.0, 90.0],
+				minMaxDist: [0.05, 2.0]
+			}
+		},
+		space: {
+			centerMode: "scene",
+			radiusMode: "scene",
+			cameraNearFar    : [0.01, 5.0],
+		},
+		config : {
+			pickedpointColor    : [1.0, 0.0, 1.0],
+			measurementColor    : [0.5, 1.0, 0.5],
+			showClippingPlanes  : false,
+			showClippingBorder  : true,
+			clippingBorderSize  : 0.5,
+			clippingBorderColor : [0.0, 1.0, 1.0]
+		}
+	};
+
+	var modelFile = "./models/" + objCode + ".nxz";
+
+	myScene.meshes["mesh"].url = modelFile;
+
+	presenter.setScene(myScene);
+
+//--MEASURE--
+	presenter._onEndMeasurement = onEndMeasure;
+//--MEASURE--
+
+//--POINT PICKING--
+	presenter._onEndPickingPoint = onEndPick;
+//--POINT PICKING--
+
+//--SECTIONS--
+	sectiontoolInit();
+//--SECTIONS--
+}
+//--SCENE SETUP--
+
+//--TOOLBAR--
+function actionsToolbar(action) {
+	if(action=='home') home();
+	else if(action=='measure' || action=='measure_on') { presenter.enableMeasurementTool(!presenter.isMeasurementToolEnabled()); measureSwitch(); }
+	else if(action=='pick' || action=='pick_on') { presenter.enablePickpointMode(!presenter.isPickpointModeEnabled()); pickpointSwitch(); }
+	else if(action=='sections' || action=='sections_on') { sectiontoolReset(); sectiontoolSwitch(); }
+	else if(action=='screenshot') presenter.saveScreenshot();
+	else if(action=='help') showHelp();
+}
+//--TOOLBAR--
+
+//--ORTHO--
+function updateOrtho(value){
+	if(value) presenter.setCameraOrthographic();
+	else presenter.setCameraPerspective();
+
+	$('#i_ortho')[0].checked = value;
+}
+//--ORTHO--
+
+//--GRID--
+function addGrid(rad, majStep) {
+	if (rad === undefined) rad = 1.0 / presenter.sceneRadiusInv;
+	if (majStep === undefined) majStep = 10.0; // default 10 units between major lines (in model space)
+//---------------------------
+	var bb = getBBox("model_instance");
+//---------------------------
+	var XC = (bb[0] + bb[3]) / 2.0;
+	var YC = bb[4];
+	var ZC = (bb[2] + bb[5]) / 2.0;
+
+
+	var numDivMaj = Math.floor(rad/majStep);
+	
+	var linesBuffer;
+
+	// major
+	var gridMaj;
+	linesBuffer = [];
+	for (gg = -numDivMaj; gg <= numDivMaj; gg+=1)
+	{
+		linesBuffer.push([XC + (gg*majStep), YC, ZC + (-majStep*numDivMaj)]);
+		linesBuffer.push([XC + (gg*majStep), YC, ZC + ( majStep*numDivMaj)]);
+		linesBuffer.push([XC + (-majStep*numDivMaj), YC, ZC + (gg*majStep)]);
+		linesBuffer.push([XC + ( majStep*numDivMaj), YC, ZC + (gg*majStep)]);
+	}
+	gridMaj = presenter.createEntity("gridMaj", "lines", linesBuffer);
+	gridMaj.color = [0.9, 0.9, 0.9, 1.0];
+	gridMaj.zOff = 0.0;
+	presenter.repaint();
+}
+
+function removeGrid() {
+	presenter.deleteEntity("gridMaj");
+}
+//--GRID--
+
+//--AXES--
+function addAxes(){
+	var rad = (1.0 / presenter.sceneRadiusInv)/2.0;
+	var linesBuffer;
+	var point, tpoint;
+
+	point = [rad, 0.0, 0.0, 1.0]
+	tpoint = SglMat4.mul4(presenter._scene.modelInstances["model_instance"].transform.matrix, point);
+	linesBuffer = [];
+	linesBuffer.push([0, 0, 0]);
+	linesBuffer.push([tpoint[0], tpoint[1], tpoint[2]]);
+	var axisX = presenter.createEntity("XXaxis", "lines", linesBuffer);
+	axisX.color = [1.0, 0.2, 0.2, 1.0];
+	axisX.zOff = 0.0;
+
+	point = [0.0, rad, 0.0, 1.0]
+	tpoint = SglMat4.mul4(presenter._scene.modelInstances["model_instance"].transform.matrix, point);
+	linesBuffer = [];
+	linesBuffer.push([0, 0, 0]);
+	linesBuffer.push([tpoint[0], tpoint[1], tpoint[2]]);
+	var axisY = presenter.createEntity("YYaxis", "lines", linesBuffer);
+	axisY.color = [0.2, 1.0, 0.2, 1.0];
+	axisY.zOff = 0.0;
+
+	point = [0.0, 0.0, rad, 1.0]
+	tpoint = SglMat4.mul4(presenter._scene.modelInstances["model_instance"].transform.matrix, point);
+	linesBuffer = [];
+	linesBuffer.push([0, 0, 0]);
+	linesBuffer.push([tpoint[0], tpoint[1], tpoint[2]]);
+	var axisZ = presenter.createEntity("ZZaxis", "lines", linesBuffer);
+	axisZ.color = [0.2, 0.2, 1.0, 1.0];
+	axisZ.zOff = 0.0;
+
+	presenter.repaint();
+}
+
+function removeAxes(){
+	presenter.deleteEntity("XXaxis");
+	presenter.deleteEntity("YYaxis");
+	presenter.deleteEntity("ZZaxis");
+}
+//--AXES--
+
+//--BBOX--
+function getBBox(instance) {
+	var mname = presenter._scene.modelInstances[instance].mesh;
+	var vv = presenter._scene.meshes[mname].renderable.mesh.basev;
+	var bbox = [-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE];
+	var point,tpoint;
+
+	for(var vi=1; vi<(vv.length / 3); vi++){
+		point = [vv[(vi*3)+0], vv[(vi*3)+1], vv[(vi*3)+2], 1.0]
+		tpoint = SglMat4.mul4(presenter._scene.modelInstances[instance].transform.matrix, point);
+		if(tpoint[0] > bbox[0]) bbox[0] = tpoint[0];
+		if(tpoint[1] > bbox[1]) bbox[1] = tpoint[1];
+		if(tpoint[2] > bbox[2]) bbox[2] = tpoint[2];
+		if(tpoint[0] < bbox[3]) bbox[3] = tpoint[0];
+		if(tpoint[1] < bbox[4]) bbox[4] = tpoint[1];
+		if(tpoint[2] < bbox[5]) bbox[5] = tpoint[2];
+	}
+	return bbox;
+}
+//--BBOX--
+
+//--LIGHT--
+function clickLightController(event) {
+	var XX=0, YY=0;
+	var midpoint = [63,63];
+	var radius = 60;
+
+	var lightControllerCanvas = document.getElementById("lightcontroller_canvas");
+	var coords = lightControllerCanvas.relMouseCoords(event);
+
+	XX = coords.x - midpoint[0];
+	YY = coords.y - midpoint[1];
+
+	// check inside circle
+	if((XX*XX + YY*YY) < ((radius-5)*(radius-5))) {
+		var lx = (XX / radius)/2.0;
+		var ly = (YY / radius)/2.0;
+
+		VIEW_STATE.lightDir = [lx,ly];
+		presenter.rotateLight(VIEW_STATE.lightDir[0],-VIEW_STATE.lightDir[1]); // inverted y
+		updateLightController(VIEW_STATE.lightDir[0],VIEW_STATE.lightDir[1]);
+
+		(event.touches) ? lightControllerCanvas.addEventListener("touchmove", clickLightController, false) : lightControllerCanvas.addEventListener("mousemove", clickLightController, false);
+	}
+}
+
+function updateLightController(xx,yy) {
+	var midpoint = [63,63];
+	var radius = 61;
+
+	var lightControllerCanvas = document.getElementById("lightcontroller_canvas");
+	var context = lightControllerCanvas.getContext("2d");
+	context.clearRect(0, 0, lightControllerCanvas.width, lightControllerCanvas.height);
+
+	context.beginPath();
+	context.arc(midpoint[0], midpoint[1], radius, 0, 2 * Math.PI, false);
+	var grd=context.createRadialGradient(midpoint[0]+(xx*radius*2),midpoint[1]+(yy*radius*2),5,midpoint[0], midpoint[1],radius);
+	grd.addColorStop(0,"yellow");
+	grd.addColorStop(1,"black");
+	context.fillStyle = grd;
+	context.fill();
+	context.lineWidth = 3;
+	context.strokeStyle = 'black';
+	context.stroke();
+
+	context.beginPath();
+	context.rect(midpoint[0]+(xx*radius*2)-3,midpoint[1]+(yy*radius*2)-3,5,5);
+	context.lineWidth = 2;
+	context.strokeStyle = 'yellow';
+	context.stroke();
+
+	presenter.ui.postDrawEvent();
+}
+
+function setupLightController() {
+		// install handler for relative mouse coords
+		HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+		// touch and click management
+		var lightControllerCanvas = document.getElementById("lightcontroller_canvas");
+		lightControllerCanvas.addEventListener("touchstart", clickLightController, false);
+		lightControllerCanvas.addEventListener("mousedown", clickLightController, false);
+		var canvas = document.getElementById("draw-canvas");
+		canvas.addEventListener("mouseup", function () { 
+			lightControllerCanvas.removeEventListener("mousemove", clickLightController, false); 
+			lightControllerCanvas.removeEventListener("touchmove", clickLightController, false);
+		}, false);
+		document.addEventListener("mouseup", function () { 
+			lightControllerCanvas.removeEventListener("mousemove", clickLightController, false);
+			lightControllerCanvas.removeEventListener("touchmove", clickLightController, false);
+		}, false);
+}
+//--LIGHT--
+
+//--MEASURE--
+function onEndMeasure(measure) {
+	$('#measure-output').html(measure.toFixed(2) + " mm"); 
+}
+//--MEASURE--
+
+//--POINT--
+function onEndPick(point) {
+	var x = point[0].toFixed(2);
+	var y = point[1].toFixed(2);
+	var z = point[2].toFixed(2);
+    $('#pickpoint-output').html("[ "+x+" , "+y+" , "+z+" ]");
+}
+//--POINT--
+
+//--VIEWSTATE--
+function resetViewState(){
+	VIEW_STATE["solid"] = DEFAULT_VIEW_STATE["solid"];
+	VIEW_STATE["transparency"] = DEFAULT_VIEW_STATE["transparency"];
+	VIEW_STATE["lighting"] = DEFAULT_VIEW_STATE["lighting"];
+	VIEW_STATE["culling"] = DEFAULT_VIEW_STATE["culling"];
+	VIEW_STATE["lightDir"] = DEFAULT_VIEW_STATE["lightDir"];
+	displayViewState();
+}
+
+function updateViewState(field, value){
+	VIEW_STATE[field] = value;
+	displayViewState();
+}
+
+function displayViewState(){
+	$('#i_solidColor').bootstrapToggle((VIEW_STATE.solid)?'on':'off', true);
+	presenter.setInstanceSolidColor('MAIN', VIEW_STATE.solid, false);
+
+	$('#i_transparency').bootstrapToggle((VIEW_STATE.transparency)?'on':'off', true);
+	presenter.setInstanceTransparency('MAIN', VIEW_STATE.transparency, false);
+
+	$('#i_useLighting').bootstrapToggle((VIEW_STATE.lighting)?'on':'off', true);
+	presenter.enableSceneLighting(VIEW_STATE.lighting);
+
+	$('#i_useCulling').bootstrapToggle((VIEW_STATE.culling)?'on':'off', true);
+	if(VIEW_STATE.culling)
+		presenter._scene.modelInstances['model_instance'].backfaceColor = [ 0.7, 0.4, 0.4, 2.0 ];
+	else 
+		presenter._scene.modelInstances['model_instance'].backfaceColor = [ 0.7, 0.4, 0.4, 3.0 ];
+
+	presenter.rotateLight(VIEW_STATE.lightDir[0],-VIEW_STATE.lightDir[1]); // inverted y
+	updateLightController(VIEW_STATE.lightDir[0],VIEW_STATE.lightDir[1]);
+
+	presenter.repaint();
+}
+//--VIEWSTATE--
+
+//--HELP--
+function showHelp(){
+	$('#helpPanel').modal("show");
+}
+//--HELP--
+
+//--EDIT--
+function showEdit(spotID){
+	const spot = OBJECT_ANNOTATION.spots[spotID];
+	for(let field of ['title', 'text', 'color', 'radius']) {
+		let input = $(`#spotEditPanel [name=${field}]`);
+		if(field == 'color')
+			input.val(color2Hex(spot[field]));
+		else if(field == 'radius')
+			input.val(spot[field]*10);
+		else
+			input.val(spot[field]);
+	}
+	selectedSpot = spotID;
+	$('#spotEditPanel').modal("show").on('shown.bs.modal', function () {
+		resizeTextarea();
+	});
+}
+//--EDIT--
+
+//--CONFIG--
+function buildConfigModal(spotID, data){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];		
+			
+			// clear panel content
+			$('#spotConfigPanelContent').empty();
+
+			// build panel title
+			$('#spotConfigPanelContent').append(`
+				<div class="text-center my-2 py-2 flex-shrink-0" style="background-color: white; border-bottom: 1px solid #dee2e6;">
+					<h6 id="spotConfigPanelTitle"></h6>
+				</div>
+			`);
+
+			// build panel tabs
+			const tabList = $(`<ul class="nav nav-tabs my-0 flex-shrink-0" id="spotConfigTabList" role="tablist" style="background-color: white;"></ul>`);
+			$('#spotConfigPanelContent').append(tabList);
+			const tabContent = $(`<div class="tab-content flex-grow-1" id="spotConfigTabContent" style="overflow-y: auto;"></div>`);
+			$('#spotConfigPanelContent').append(tabContent);
+
+			for (const tabName in data) {
+				const tabNameClean = tabName.replace(/\s+/g, '').toLowerCase();
+				tabList.append(`
+					<li class="nav-item">
+						<a class="nav-link" id="${tabNameClean}_tab" data-toggle="tab" href="#${tabNameClean}_tab_content" role="tab">${tabName}</a>
+					</li>
+				`);
+				tabContent.append(`
+					<div class="tab-pane fade p-3" id="${tabNameClean}_tab_content" role="tabpanel">
+					</div>
+				`);	
+
+				// build tabs content					
+				for (const sectionName in data[tabName]) {
+					const section = data[tabName][sectionName];
+					const sectionNameClean = sectionName.replace(/\s+/g, '').toLowerCase();
+					
+					const sectionDiv = $(`<div class="my-4" id="${sectionNameClean}"></div>`);
+					$(`#${tabNameClean}_tab_content`).append(sectionDiv);
+					sectionDiv.append(`
+						<div class="text-center mb-3">				
+							<b>${sectionName}</b>
+						</div>
+					`);
+					for (const fieldName in section) {
+						const field = section[fieldName];
+
+						if (field.type === 'text') {
+							sectionDiv.append(`
+								<div class="mb-3 align-items-center" id="${sectionNameClean}_${fieldName}">
+    								<img src="./media/notes.png" width="24px" class="mb-2">	
+									<label style="font-weight: 500">${field.label}</label>
+									<textarea 
+										name="${fieldName}" 
+										class="form-control form-control-sm auto-resize" 
+										rows="1" 
+										style="resize: none; overflow: hidden;"
+										placeholder="Add text here..."
+										title="Add text here..."
+										oninput="resizeTextarea(this);"></textarea>						
+								</div>
+							`);
+						} 
+						else if (field.type === 'image') {
+							sectionDiv.append(`
+								<div class="mb-3 align-items-center" id="${sectionNameClean}_${fieldName}">
+									<img src="./media/photos.png" width="24px" class="mb-2">
+									<label style="font-weight: 500">${field.label}</label>										
+								</div>
+							`);
+							
+							const images = Array.isArray(field.image) ? field.image : [field.image];	
+							const imagesDiv = $(`#${sectionNameClean}_${fieldName}`);														
+								
+							images.forEach((image, imageIndex) => {
+								imagesDiv.append(`
+									<div class="mb-1 align-items-center" id="${sectionNameClean}_${fieldName}_image_${imageIndex}"></div>							
+								`);
+
+								const imageDiv = $(`#${sectionNameClean}_${fieldName}_image_${imageIndex}`);
+
+								if (image.label) imageDiv.append(`<label style="font-weight: 500">${image.label}</label>`);
+
+								imageDiv.append(`
+									<input type="text" class="form-control form-control-sm mb-1" name="${fieldName}_image_${imageIndex}_URL" placeholder="Add image URL here..." title="Add image URL here..."/>
+									<input type="text" class="form-control form-control-sm mb-3" name="${fieldName}_image_${imageIndex}_caption" placeholder="Add image caption here..." title="Add image caption here..."/>	
+								`);
+
+								if (image.caption.other && image.caption.other.type === 'table') {
+									let tableContent = `
+										<div class="table-responsive">
+											<table class="table table-sm table-borderless" id="${sectionNameClean}_${fieldName}_image_${imageIndex}_caption_table" style="width:100%">
+												<thead><tr>
+									`;
+
+									for (const header of image.caption.other.headers) {
+										tableContent += `<th  style="font-weight: 500" colspan="${header.colspan}">${header.value}</th>`;
+									}
+									tableContent += `</tr></thead><tbody>`;
+
+									for (const row of image.caption.other.rows) {
+										tableContent += `<tr>`;
+										for (const cellText of row) {
+											if (cellText.editable) {								
+												tableContent += `<td>
+													<input type="text" class="form-control form-control-sm" placeholder="Add value here..." title="Add value here..."/>
+													</td>`;
+											} else {
+												tableContent += `<td>
+													<input type="text" class="form-control form-control-sm" readonly/>
+													</td>`;
+											}
+										}
+										tableContent += `</tr>`;
+									}
+									tableContent += `
+												</tbody>
+											</table>
+										</div>
+									`;
+									imageDiv.append(tableContent);
+								}
+							});
+						} else if (field.type === 'table') {		
+							let tableContent = `
+								<div class="table-responsive">
+									<table class="table table-sm table-borderless" id="${sectionNameClean}_${fieldName}" style="width:100%">
+										<thead><tr>
+							`;
+
+							for (const header of field.headers) {
+								tableContent += `<th colspan="${header.colspan}">${header.value}</th>`;
+							}
+							tableContent += `</tr></thead><tbody>`;
+
+							for (const row of field.rows) {
+								tableContent += `<tr>`;
+								for (const cellText of row) {
+									if (cellText.editable) {								
+										tableContent += `<td>
+											<input type="text" class="form-control form-control-sm" placeholder="Add value here..." title="Add value here..."/>
+											</td>`;
+									} else {
+										tableContent += `<td>
+											<input type="text" class="form-control form-control-sm" readonly/>
+											</td>`;
+									}
+								}
+								tableContent += `</tr>`;
+							}
+							tableContent += `
+										</tbody>
+									</table>
+								</div>
+							`;
+							sectionDiv.append(tableContent);
+						}
+						else if (field.type === 'download') {
+							sectionDiv.append(`
+								<div class="mb-3 align-items-center" id="${sectionNameClean}_${fieldName}">
+    								<img src="./media/download.png" width="24px" class="mb-2">	
+									<label style="font-weight: 500">${field.label}</label>	
+									<input type="text" class="form-control form-control-sm mb-1" name="${fieldName}" placeholder="Add resource URL here..." title="Add resource URL here..."/>													
+								</div>
+							`);
+						} 
+					}
+				}
+			}
+
+			// activate first tab
+			$('#spotConfigTabList a:first').addClass('active');
+			$('#spotConfigTabContent div:first').addClass('show active');
+
+			//	setup tabs
+			$('#spotConfigTabList a[data-toggle="tab"]').on('shown.bs.tab', function() {
+				setupTabs('spotConfigTabContent');
+			});			
+
+            setTimeout(() => resolve(), 10);           
+        } catch (error) {
+            reject(error);
+        }
+    });			
+}
+
+function fillConfigModal(spotID, data){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];
+
+			$('#spotConfigPanelTitle').text(spot.title);
+
+			for (const tabName in data) {
+				
+				const tabNameClean = tabName.replace(/\s+/g, '').toLowerCase();
+					
+				for (const sectionName in data[tabName]) {
+					const section = data[tabName][sectionName];
+					const sectionNameClean = sectionName.replace(/\s+/g, '').toLowerCase();
+	
+					// fill tabs content				
+					for (const fieldName in section) {
+						const field = section[fieldName];
+						if (field.type === 'text') {
+							const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}"]`);
+							inputElement.val(field.value);
+						}
+						else if (field.type === 'image') {
+							const images = Array.isArray(field.image) ? field.image : [field.image];														
+								
+							images.forEach((image, imageIndex) => {
+								const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}_image_${imageIndex}_URL"]`);
+								inputElement.val(image.url);
+
+								if (image.caption.value) {
+									const captionInputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}_image_${imageIndex}_caption"]`);
+									captionInputElement.val(image.caption.value);
+								}
+
+								if (image.caption.other && image.caption.other.type === 'table') {
+									const tableElement = $(`#${tabNameClean}_tab_content #${sectionNameClean}_${fieldName}_image_${imageIndex}_caption_table tbody`);
+									image.caption.other.rows.forEach((row, rowIndex) => {
+										row.forEach((cellText, cellIndex) => {
+											const inputElement = tableElement.find(`tr:eq(${rowIndex}) td:eq(${cellIndex}) input`);
+											inputElement.val(cellText.value);
+										});
+									});
+								}								
+							});
+						} else if (field.type === 'table') {		
+							const tableElement = $(`#${tabNameClean}_tab_content #${sectionNameClean}_${fieldName} tbody`);
+							field.rows.forEach((row, rowIndex) => {
+								row.forEach((cellText, cellIndex) => {
+									const inputElement = tableElement.find(`tr:eq(${rowIndex}) td:eq(${cellIndex}) input`);
+									inputElement.val(cellText.value);
+								});
+							});
+						} else if (field.type === 'download') {
+							const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}"]`);
+							inputElement.val(field.url);
+						} 
+					}
+				}
+			}
+
+			setTimeout(() => resolve(), 10);			
+		} catch (error) {
+			reject(error);
+		}
+	});
+}
+
+function showConfig(spotID){	
+	selectedSpot = spotID;
+	$('#spotConfigPanel').modal("show").on('shown.bs.modal', function () {
+		resizeTextarea();
+	});
+}
+//--CONFIG--
+
+//--DELETE--
+function showDelete(spotID){
+	selectedSpot = spotID;
+	$('#spotDeletePanel').modal("show");
+}
+//--DELETE--
+
+//--IMAGE--
+function showImage(imageSrc, imageTitle) {
+    document.getElementById('imageViewerImg').src = imageSrc;
+    document.getElementById('imageViewerTitle').textContent = imageTitle;
+    $('#imageViewerModal').modal('show');
+}
+//--IMAGE--
+
+//--HOME--
+function home(){
+//	presenter.resetTrackball();
+	presenter.animateToTrackballPosition([0.0, 0.0, 0.0, 0.0, 0.0, DEFAULT_STARTING_DISTANCE]);
+	// put back light
+	presenter.rotateLight(VIEW_STATE.lightDir[0],-VIEW_STATE.lightDir[1]); // inverted y
+	updateLightController(VIEW_STATE.lightDir[0],VIEW_STATE.lightDir[1]);	
+}
+//--HOME--
+
+//--CUBE--
+function viewFrom(direction){
+	var distance = DEFAULT_STARTING_DISTANCE - 0.2;
+    switch(direction) {
+        case "front":
+			presenter.animateToTrackballPosition([0.0, 0.0, 0.0, 0.0, 0.0, distance]);
+            break;
+        case "back":
+			presenter.animateToTrackballPosition([180.0, 0.0, 0.0, 0.0, 0.0, distance]);
+            break;
+        case "top":
+			presenter.animateToTrackballPosition([0.0, 90.0, 0.0, 0.0, 0.0, distance]);
+            break;
+        case "bottom":
+			presenter.animateToTrackballPosition([0.0, -90.0, 0.0, 0.0, 0.0, distance]);
+            break;
+        case "left":
+			presenter.animateToTrackballPosition([270.0, 0.0, 0.0, 0.0, 0.0, distance]);
+            break;
+        case "right":
+			presenter.animateToTrackballPosition([90.0, 0.0, 0.0, 0.0, 0.0, distance]);
+            break;
+    }
+}
+
+function onTrackballUpdate(trackState){
+	updateCube(-trackState[0], -trackState[1]);
+}
+
+function updateCube(angle, tilt) {
+    var transf = "translateZ(-100px) rotateX("+tilt+"deg) rotateY("+angle+"deg)";
+    $('.cube').css({"transform":transf});
+}
+//--CUBE--
+
+//--FILL NOTE--
+function fillNotesPanel(){
+	var target = document.getElementById("panel_notes");
+	target.innerHTML = "";
+	var content = "";
+
+	content += "<div class='p-1 m-0 align-items-left w-100'>\n";
+	content += "  <h6>\n";
+	content += "  <div class='p-1 m-0 form-group'>";
+	content += "  <textarea class='mt-1 form-control' id='i_objectNotes' rows='12' style='resize:none;' onchange='updateObjectNotes();'></textarea>";
+	content += "  </div>";
+	content += "  </h6>\n";
+	content += "</div>\n";
+
+	target.innerHTML = content;
+
+	document.getElementById("i_objectNotes").value = OBJECT_ANNOTATION.notes;
+}
+//--FILL NOTE--
+
+//--FILL VIEWS--
+function fillViewsPanel(){
+//	$(".tooltip").tooltip("hide");
+	var target = document.getElementById("panel_views");
+	target.innerHTML = "";
+	var content = "";
+
+	content += `
+	<div class="col p-1 m-0 align-items-left w-100">
+	<table class="mt-2" border="1" style="width:100%">
+	<thead><tr><th><\/th><th><center>Description<\/center><\/th><th> <\/th><\/thead>
+	`;
+
+	for (const view in OBJECT_ANNOTATION.views){
+		content += `
+		<tr>
+		<td style="text-align:center">
+			<button data-toggle="tooltip" data-placement="top" title='Go to View' class='m-1 btn-sm btn-secondary' onclick='gotoView("${view}")'><img src='./media/view.png' width='15px'/><\/button>
+		<\/td>
+		<td><textarea class='form-control' id='i_viewText_${view}' rows='3' style='resize:none;' onchange='updateViewText("${view}",this.value);'>${OBJECT_ANNOTATION.views[view].text}<\/textarea><\/td>
+		<td style="text-align:center">
+			<button data-toggle="tooltip" data-placement="top" title='Update View' class='m-1 btn-sm btn-secondary' onclick='if(confirm(\"Update View?\")) updateView("${view}");'><img src='./media/edit.png' width='15px'/><\/button><\/br>
+			<button data-toggle="tooltip" data-placement="bottom" title='Delete View' class='m-1 btn-sm btn-danger' onclick='if(confirm(\"Delete View?\")) deleteView("${view}");'><img src='./media/delete.png' width='15px'/><\/button>
+		<\/td>
+		<\/tr>
+		`;
+	}
+
+	content += `
+		<tr><td colspan="3"><button class="ml-3 my-1 btn btn-secondary btn-small" onclick="addView();" data-toggle="tooltip" data-placement="bottom" title="Add New View"><img src='./media/add.png' width='25px'/><\/button><\/td><\/tr>
+	<\/table>
+	<\/div>
+	`;
+
+	target.innerHTML = content;
+//	$('[data-toggle="tooltip"]').tooltip({trigger : 'hover'});
+}
+//--FILL VIEWS--
+
+//--FILL SPOTS--
+function fillSpotsPanel(){
+//	$(".tooltip").tooltip("hide");
+	var target = document.getElementById("panel_spots");
+	target.innerHTML = "";
+	var content = "";
+
+	content += `
+	<div class="p-1 m-0 align-items-left w-100">
+		<ul class="p-1 m-0">
+	`;
+
+	for (const spot in OBJECT_ANNOTATION.spots){
+		// get hex color
+		let r = parseInt(OBJECT_ANNOTATION.spots[spot].color[0]*255);
+		let g = parseInt(OBJECT_ANNOTATION.spots[spot].color[1]*255);
+		let b = parseInt(OBJECT_ANNOTATION.spots[spot].color[2]*255);
+		var hxcol = "#" + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0'); 
+
+		// visibility icon and title
+        var visibilityImage = OBJECT_ANNOTATION.spots[spot].visible ? './media/eye.png' : './media/eye_off.png';
+        var visibilityTitle = OBJECT_ANNOTATION.spots[spot].visible ? 'Hide' : 'Show';
+
+		content += `
+		<li class="mt-1">
+			<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+				<a class="btn-sm btn-light" onclick="toggleSpotVisibility('${spot}');" title="${visibilityTitle}" style='cursor:hand;'>
+					<img id="vis_img_${spot}" src="${visibilityImage}" width="20px"><\/a>			
+				<input type="text" class="form-control form-control-sm" oninput="updateSpotTitle('${spot}', this.value); updateDataPanelDropdown('${spot}', this.value);" title="Title" value="${OBJECT_ANNOTATION.spots[spot].title}" style="flex: 1; min-width: 120px;" readonly>
+			<\/div>
+		<\/li>
+		`;
+	}
+
+    content += `
+		<\/ul>
+	<\/div>
+    `;
+
+	target.innerHTML = content;	
+//	$('[data-toggle="tooltip"]').tooltip({trigger : 'hover', container: 'body', boundary: 'viewport', offset: '0, 20'});
+
+    // Automatic scroll
+    setTimeout(function() {
+        var container = document.getElementById("rr6");
+        container.scrollTop = container.scrollHeight;
+    }, 50);
+}
+//--FILL SPOTS--
+
+//--FILL DATA--
+function fillDataPanel(){
+    return new Promise((resolve, reject) => {
+        try {	
+			if ($('#spotSelector').length) return resolve(); // already built
+
+			// clear panel content
+			$('#panel_data').empty();
+
+			// build panel structure
+			$('#panel_data').append(`
+				<div class="p-1 m-0 align-items-left w-100" id="data_panel_dropdown" style="position: sticky; top: 40px; z-index: 50; background-color: silver;">
+					<div class="p-1 m-0 form-group">
+						<select id="spotSelector" class="mt-1 form-control form-control-sm" onchange="selectSpotFromDropdown(this.value);"></select>
+					</div>
+				</div>
+				</div>
+				<div class="p-1 m-0 align-items-left w-100" id="data_panel_details">
+					<div class="p-1 m-0 align-items-left w-100">
+						<div class="text-center m-3">
+							<h6>No data available</h6>
+						</div>						
+					</div>
+				</div>
+			`);
+
+            setTimeout(() => resolve(), 10);           
+        } catch (error) {
+            reject(error);
+        }
+    });			
+}
+
+function fillDataPanelDropdown(spotID){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];
+
+			// add options to dropdown
+			$('#spotSelector').append(`
+					<option value="${spotID}" selected>${spot.title}</option>
+				`);
+							
+			setTimeout(() => resolve(), 10);           
+		} catch (error) {
+			reject(error);
+		}
+	});			
+}
+
+function updateDataPanelDropdown(spotID, title){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];
+
+			// update option title in dropdown
+			$(`#spotSelector option[value="${spotID}"]`).text(title);
+
+            setTimeout(() => resolve(), 10);           
+        } catch (error) {
+            reject(error);
+        }
+    });					
+}
+
+function buildDataPanelDetails(spotID){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];
+
+			// clear panel content
+			$('#data_panel_details').empty();
+
+			if (spot.data) {
+				// build panel tabs
+				const tabList = $(`<ul class="nav nav-tabs my-2" id="spotDataTabList" role="tablist" style="position: sticky; top: 90px; z-index: 40; background-color: silver;"></ul>`);
+				$('#data_panel_details').append(tabList);
+				const tabContent = $(`<div class="tab-content" id="spotDataTabContent"></div>`);
+				$('#data_panel_details').append(tabContent);
+
+				for (const tabName in spot.data) {
+					const tabNameClean = tabName.replace(/\s+/g, '').toLowerCase();
+					tabList.append(`
+						<li class="nav-item">
+							<a class="nav-link" id="${tabNameClean}_panel_tab" data-toggle="tab" href="#${tabNameClean}_panel_tab_content" role="tab">${tabName}</a>
+						</li>
+					`);
+					tabContent.append(`
+						<div class="tab-pane fade" id="${tabNameClean}_panel_tab_content" role="tabpanel">
+							<div class="p-1 m-0 align-items-left w-100" id="${tabNameClean}_panel_tab_content_inner"></div>
+						</div>
+					`);	
+
+					// build tabs content					
+					for (const sectionName in spot.data[tabName]) {
+						const section = spot.data[tabName][sectionName];
+						const sectionNameClean = sectionName.replace(/\s+/g, '').toLowerCase();
+				
+						const sectionDiv = $(`<div class="my-1" id="${sectionNameClean}_panel"></div>`);
+						$(`#${tabNameClean}_panel_tab_content_inner`).append(sectionDiv);
+						sectionDiv.append(`
+							<div class="text-center my-3">				
+								<h6>${sectionName}</h6>
+							</div>
+						`);
+						for (const fieldName in section) {
+							const field = section[fieldName];
+							sectionDiv.append(`
+								<div class="row mx-0 my-1 align-items-center" id="${sectionNameClean}_${fieldName}_panel">
+								</div>							
+							`);
+						}
+					}
+				}
+
+				// activate first tab
+				$('#spotDataTabList a:first').addClass('active');
+				$('#spotDataTabContent div:first').addClass('show active');
+
+				//	setup tabs
+				$('#spotDataTabList a[data-toggle="tab"]').on('shown.bs.tab', function() {
+					setupTabs('rr6');
+				});
+			} else {
+				$('#data_panel_details').append(`
+					<div class="text-center m-3">
+						<h6>No data available</h6>
+					</div>
+				`);
+			}
+
+            setTimeout(() => resolve(), 10);           
+        } catch (error) {
+            reject(error);
+        }
+    });			
+}
+
+function fillDataPanelDetails(spotID){
+    return new Promise((resolve, reject) => {
+        try {	
+			const spot = OBJECT_ANNOTATION.spots[spotID];
+
+			for (const tabName in spot.data) {
+				const tabNameClean = tabName.replace(/\s+/g, '').toLowerCase();
+						
+				for (const sectionName in spot.data[tabName]) {
+					const section = spot.data[tabName][sectionName];
+					const sectionNameClean = sectionName.replace(/\s+/g, '').toLowerCase();
+
+					// fill tabs content				
+					for (const fieldName in section) {
+						const field = section[fieldName];
+						const fieldDiv = $(`#${sectionNameClean}_${fieldName}_panel`);
+						fieldDiv.empty();
+						if (field.type === 'text') {
+							fieldDiv.append(`<div><b>${field.label}:</b> ${field.value}</div>`);
+						} 
+						else if (field.type === 'image') {
+							const images = Array.isArray(field.image) ? field.image : [field.image];	
+
+							if (Array.isArray(field.image)) {	
+								fieldDiv.append(`
+									<div class="text-center w-100 my-2" id="${sectionNameClean}_${fieldName}_image_panel">
+										<div id="${sectionNameClean}_${fieldName}_image_carousel" class="carousel slide" data-interval="false" style="max-width: 400px; margin: 0 auto;">
+											<!-- Indicators -->
+											<ol id="${sectionNameClean}_${fieldName}_image_carousel_indicators" class="carousel-indicators">
+											</ol>
+											
+											<!-- Wrapper for slides -->
+											<div id="${sectionNameClean}_${fieldName}_image_carousel_inner" class="carousel-inner">
+											</div>
+											
+											<!-- Left and right controls -->
+											<a class="carousel-control-prev" href="#${sectionNameClean}_${fieldName}_image_carousel" role="button" data-slide="prev">
+												<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+												<span class="sr-only">Previous</span>
+											</a>
+											<a class="carousel-control-next" href="#${sectionNameClean}_${fieldName}_image_carousel" role="button" data-slide="next">
+												<span class="carousel-control-next-icon" aria-hidden="true"></span>
+												<span class="sr-only">Next</span>
+											</a>
+										</div>
+									</div>										
+								`);								
+								
+								const carouselIndicators = $(`#${sectionNameClean}_${fieldName}_image_carousel_indicators`);
+								const carouselInner = $(`#${sectionNameClean}_${fieldName}_image_carousel_inner`);
+
+								images.forEach((image, imageIndex) => {	
+									carouselIndicators.append(`
+										<li data-target="#${sectionNameClean}_${fieldName}_image_carousel" data-slide-to="${imageIndex}" class="${imageIndex === 0 ? 'active' : ''}"></li>
+									`);
+
+									carouselInner.append(`
+										<div id="${sectionNameClean}_${fieldName}_image_carousel_${imageIndex}" class="carousel-item text-center w-100 ${imageIndex === 0 ? 'active' : ''}">							
+											<img src="${image.url ? image.url : './media/view.png'}" class="img-fluid" style="max-height: 200px; object-fit: contain; cursor: pointer;" alt="${image.label}" onclick="showImage('${image.url ? image.url : './media/view.png'}', '${image.caption.value ? image.caption.value : ''}')">
+											<div class="carousel-caption w-100 p-2" style="position: relative; top: 0; left: 0; right: 0; color: #212529;">
+												${image.caption.value ? `<i>${image.caption.value}</i>` : '&nbsp;'}
+											</div>												
+										</div>																		
+									`);
+
+									if (image.caption.other && image.caption.other.type === 'table') {
+										const imageDiv = $(`#${sectionNameClean}_${fieldName}_image_carousel_${imageIndex}`);
+										let border = image.caption.other.border ? 'table-bordered' : '';						
+										let tableContent = `
+											<div class="col-12">
+												<table class="table table-sm ${border}">
+													<thead><tr>
+										`;
+
+										for (const header of image.caption.other.headers) {
+											tableContent += `<th colspan="${header.colspan}">${header.value}</th>`;
+										}
+										tableContent += `</tr></thead><tbody>`;
+
+										for (const row of image.caption.other.rows) {
+											tableContent += `<tr>`;
+											for (const cellText of row) {
+												tableContent += `<td>${cellText.value}</td>`;
+											}
+											tableContent += `</tr>`;
+										}
+										tableContent += `
+													</tbody>
+												</table>
+											</div>
+										`;
+										imageDiv.append(tableContent);									
+									}									
+								});		
+							} else {										
+								fieldDiv.append(`
+									<div class="text-center w-100 my-2" id="${sectionNameClean}_${fieldName}_image_panel">
+										<img src="${field.image.url ? field.image.url : './media/view.png'}" class="img-fluid" style="max-height: 200px; object-fit: contain; cursor: pointer;" alt="${field.label}" onclick="showImage('${field.image.url ? field.image.url : './media/view.png'}', '${field.image.caption.value ? field.image.caption.value : ''}')">
+										<div class="text-center w-100 mt-2"><i>${field.image.caption.value ? field.image.caption.value : '&nbsp;'}</i></div>
+									</div>
+								`);
+								if (field.image.caption.other && field.image.caption.other.type === 'table') {
+									const imageDiv = $(`#${sectionNameClean}_${fieldName}_image_panel`);
+									let border = field.image.caption.other.border ? 'table-bordered' : '';						
+									let tableContent = `
+										<div class="table-responsive">
+											<table class="table table-sm ${border}" style="width:100%">
+												<thead><tr>
+									`;
+
+									for (const header of field.image.caption.other.headers) {
+										tableContent += `<th colspan="${header.colspan}">${header.value}</th>`;
+									}
+									tableContent += `</tr></thead><tbody>`;
+
+									for (const row of field.image.caption.other.rows) {
+										tableContent += `<tr>`;
+										for (const cellText of row) {
+											tableContent += `<td>${cellText.value}</td>`;
+										}
+										tableContent += `</tr>`;
+									}
+									tableContent += `
+												</tbody>
+											</table>
+										</div>
+									`;
+									imageDiv.append(tableContent);																	
+								}
+							}
+						} 
+						else if (field.type === 'table') {
+							let border = field.border ? 'table-bordered' : '';						
+							let tableContent = `
+								<div class="col-12">
+									<table class="table table-sm ${border}">
+										<thead><tr>
+							`;
+
+							for (const header of field.headers) {
+								tableContent += `<th colspan="${header.colspan}">${header.value}</th>`;
+							}
+							tableContent += `</tr></thead><tbody>`;
+
+							for (const row of field.rows) {
+								tableContent += `<tr>`;
+								for (const cellText of row) {
+									tableContent += `<td>${cellText.value}</td>`;
+								}
+								tableContent += `</tr>`;
+							}
+							tableContent += `
+										</tbody>
+									</table>
+								</div>
+							`;
+							fieldDiv.append(tableContent);
+						}
+						else if (field.type === 'download') {
+							fieldDiv.append(`
+								<div class="w-100 d-flex justify-content-between align-items-center">
+									<label>${field.label}</label>
+									<a href="${field.url}" target="_blank">
+										<img src="./media/download.png" width="36px" class="mb-2 mr-2" 
+											style="border: 2px solid #007bff; border-radius: 50%; padding: 4px; transition: all 0.3s ease;" 
+											onmouseover="this.style.backgroundColor='#007bff'; this.style.transform='scale(1.1)'" 
+											onmouseout="this.style.backgroundColor='transparent'; this.style.transform='scale(1)'" 
+											title="Download Resource">
+									</a>						
+								</div>
+							`);							
+						}
+					}
+				}
+			}
+
+            setTimeout(() => resolve(), 10);           
+        } catch (error) {
+            reject(error);
+        }
+    });	
+}
+//--FILL DATA--
+
+//--EXPORT--
+function exportAnnotations(){
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(OBJECT_ANNOTATION, null, 2)));
+	element.setAttribute('download', objCode + ".json");
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild(element);
+	toastr.success('Diagnostics Setup Exported');
+}
+//--EXPORT--
+
+//--LOAD--
+function loadAnnotations(){
+	document.getElementById("i_JSON").click();
+}
+
+function getJSON(files){
+	if((files)&&(files.length>0)){
+	    var reader = new FileReader();
+		reader.onload = importJSON;
+		reader.readAsText(event.target.files[0]);
+	}
+}
+
+function importJSON(event){
+    var newAnn = JSON.parse(event.target.result);
+
+	loadSetup(newAnn);
+}
+
+function loadJSON(filename, folder) {
+    return new Promise((resolve, reject) => {
+        var jsonFileName = filename + '.json';
+        
+        $.ajax({
+            url: './' + folder + '/' + jsonFileName,
+            type: 'GET',
+            dataType: 'json',
+            success: resolve,
+            error: reject
+        });
+    });
+}
+
+function loadSetup(data){
+	if(!data) return;
+
+	if(data.objectID == OBJECT_ANNOTATION.objectID){
+		OBJECT_ANNOTATION = data;
+
+		if(!OBJECT_ANNOTATION.spots) return;
+
+		fillSpotsPanel();
+
+		$('#panel_data').empty();
+        fillDataPanel()
+            .then(() => {
+                const dropdownPromises = [];
+                for(var spot in OBJECT_ANNOTATION.spots) {
+                    dropdownPromises.push(fillDataPanelDropdown(spot));
+                }
+                return Promise.all(dropdownPromises);
+            })
+            .then(() => {
+                var firstSpot = Object.keys(OBJECT_ANNOTATION.spots)[0];				
+				$('#spotSelector').val(firstSpot);
+				selectSpotFromDropdown(firstSpot);			
+            })
+            .catch(error => {
+                console.error('Error in fillDataPanel:', error);
+            });	
+
+		fillNotesPanel();
+
+//		fillViewsPanel();
+
+		displaySpots();
+
+        $("#data-tab, #notes-tab").removeClass("active");
+        $("#panel_data, #panel_notes").removeClass("show active");
+        $("#spots-tab").addClass("active");
+        $("#panel_spots").addClass("show active");
+
+		toastr.success('Diagnostics Setup Loaded');
+
+//		viewFrom('top');
+	}
+	else{
+		toastr.error('Object Mismatch');
+	}
+}
+//--LOAD--
+
+//--VIEWS--
+function addView(){
+	var newName = "V_" + OBJECT_ANNOTATION.newIndex++;
+	var newView = {};
+	newView.view = null;
+	newView.state = {};
+	newView.text = "Description of view " + (OBJECT_ANNOTATION.newIndex-1);
+	OBJECT_ANNOTATION.views[newName] = newView;
+	updateView(newName);
+	fillViewsPanel();
+}
+
+function updateViewText(viewID, text){
+	OBJECT_ANNOTATION.views[viewID].text = text;
+}
+
+function updateView(viewID){
+	OBJECT_ANNOTATION.views[viewID].view = track2view(presenter.getTrackballPosition());
+	for(field in VIEW_STATE)
+		OBJECT_ANNOTATION.views[viewID].state[field] = VIEW_STATE[field];
+}
+
+function gotoView(viewID){
+	for(field in OBJECT_ANNOTATION.views[viewID].state)
+		VIEW_STATE[field] = OBJECT_ANNOTATION.views[viewID].state[field];
+	displayViewState();
+	presenter.animateToTrackballPosition(view2track(OBJECT_ANNOTATION.views[viewID].view));
+	if(OBJECT_ANNOTATION.views[viewID].view.fov == "0")
+		updateOrtho(true);
+	else
+		updateOrtho(false);
+}
+
+function deleteView(viewID){
+	delete OBJECT_ANNOTATION.views[viewID];
+	fillViewsPanel();
+}
+//--VIEWS--
+
+//--SPOTS--
+function addSpot(){
+	if(IS_EDITING) return;
+	presenter._onEndPickingPoint = pickSpot;
+	presenter.enablePickpointMode(true);
+	$('#draw-canvas').css("cursor","crosshair");
+	$('button[onclick="addSpot();"]').prop('disabled', true);//.tooltip('hide');
+	toastr.warning("Click on 3D model to place a new diagnostic", "", {timeOut: 0});
+	IS_EDITING = true;
+}
+
+function pickSpot(pos){
+	presenter._onEndPickingPoint = null;
+	presenter.enablePickpointMode(false);
+	$('#draw-canvas').css("cursor","default");
+	IS_EDITING = false;
+	toastr.remove();
+	
+	var newName = "S_" + OBJECT_ANNOTATION.newIndex++;
+	var newSpot = {};
+	newSpot.pos = pos;
+	newSpot.title = "Diagnostic #" + (OBJECT_ANNOTATION.newIndex-1);
+	newSpot.text = "";
+	newSpot.visible = true;
+	newSpot.radius = 0.5;
+	newSpot.color = [0.9, 0.2, 0.2];
+	newSpot.group = 1;
+	newSpot.data = false;	
+	OBJECT_ANNOTATION.spots[newName] = newSpot;	
+
+	fillSpotsPanel();
+	
+	fillDataPanel()
+		.then(() => {
+			fillDataPanelDropdown(newName);
+			selectSpotFromDropdown(newName);
+		})
+		.catch(error => {
+			console.error('Error in fillDataPanel:', error);
+		});	
+
+	displaySpots();
+}
+
+function cancelPicking(){
+}
+
+function updateSpotTitle(spotID, title){
+	OBJECT_ANNOTATION.spots[spotID].title = title;
+}
+
+function updateSpotText(spotID, text){
+	OBJECT_ANNOTATION.spots[spotID].text = text;
+}
+
+function updateSpotRadius(spotID, value){
+	OBJECT_ANNOTATION.spots[spotID].radius = value;
+	displaySpots();
+}
+
+function updateSpotColor(spotID, value){
+	const r = parseInt(value.substr(1,2), 16)
+	const g = parseInt(value.substr(3,2), 16)
+	const b = parseInt(value.substr(5,2), 16)
+	OBJECT_ANNOTATION.spots[spotID].color = [r/255.0, g/255.0, b/255.0];
+	displaySpots();
+}
+
+function toggleSpotVisibility(spotID){
+    OBJECT_ANNOTATION.spots[spotID].visible = !OBJECT_ANNOTATION.spots[spotID].visible;
+    presenter.setSpotVisibilityByName(spotID, OBJECT_ANNOTATION.spots[spotID].visible, true);    
+	fillSpotsPanel();
+/*     var imgElement = document.getElementById("vis_img_" + spotID);
+    if (OBJECT_ANNOTATION.spots[spotID].visible) {
+        imgElement.src = './media/eye.png';
+        imgElement.title = 'Hide';
+    } else {
+        imgElement.src = './media/eye_off.png';
+        imgElement.title = 'Show';
+    } */
+}
+
+/* function updateSpotVis(spotID, visible){
+	OBJECT_ANNOTATION.spots[spotID].visible = visible;
+	presenter.setSpotVisibilityByName(spotID, visible, true);
+	fillSpotsPanel();
+} */
+
+/* function updateAllSpotsVis(visible){
+	for (const spot in OBJECT_ANNOTATION.spots){
+		OBJECT_ANNOTATION.spots[spot].visible=visible;
+		presenter.setSpotVisibilityByName(spot,visible,false);
+		presenter.repaint();
+		fillSpotsPanel();
+	}
+} */
+
+function deleteSpot(spotID){
+	if(!spotID)	return; 
+
+	delete OBJECT_ANNOTATION.spots[spotID];
+
+	fillSpotsPanel();
+	
+    var wasSelected = $('#spotSelector').val() === spotID; 
+    $('#spotSelector').find(`option[value="${spotID}"]`).remove();
+    if (wasSelected) {
+        var firstOption = $('#spotSelector option:first');
+        if (firstOption.length > 0) {
+            firstOption.prop('selected', true);
+            $('#spotSelector').val(firstOption.val());
+            selectSpotFromDropdown(firstOption.val());
+        } else {
+            $('#panel_data').html(`
+				<div class="p-1 m-0 align-items-left w-100">
+					<div class="text-center m-3">
+						<h6>No data available</h6>
+					</div>						
+				</div>
+            `);
+        }
+    }
+
+	displaySpots();
+}
+
+function displaySpots(){
+	if(!presenter._scene) return;
+	presenter._scene.spots = {};
+	presenter._spotsProgressiveID = 10; // reset to avoid accumulation
+
+	var spotRadiusScale = (1.0 / presenter.sceneRadiusInv) * 0.1;
+
+	for (const spot in OBJECT_ANNOTATION.spots){
+		var radius = OBJECT_ANNOTATION.spots[spot].radius * spotRadiusScale;
+
+		var newSpot = {
+			mesh            : "sphere",
+			color           : OBJECT_ANNOTATION.spots[spot].color,
+			alpha           : 0.7,
+			transform : { 
+				translation : OBJECT_ANNOTATION.spots[spot].pos,
+				scale : [radius, radius, radius],
+				},
+			visible         : OBJECT_ANNOTATION.spots[spot].visible,
+		};
+		presenter._scene.spots[spot] = presenter._parseSpot(newSpot);
+	}
+
+	presenter._scenePrepare();
+	presenter.repaint();
+
+	presenter.enableOnHover(true);
+	presenter._onEnterSpot  = onESpot;
+	presenter._onLeaveSpot  = onLSpot;
+	presenter._onPickedSpot = onPSpot;
+}
+
+function onESpot(spotID){
+	toastr.info(OBJECT_ANNOTATION.spots[spotID].text, OBJECT_ANNOTATION.spots[spotID].title, {timeOut: 0});
+}
+
+function onLSpot(spotID){
+	toastr.remove();
+}
+
+function onPSpot(spotID){
+    if (!spotID) return;
+
+    if (OBJECT_ANNOTATION.spots[spotID]) {
+		$("#spots-tab, #notes-tab").removeClass( "active" );
+		$("#panel_spots, #panel_notes").removeClass( "show active" );
+		$("#data-tab").addClass( "active" );
+		$("#panel_data").addClass( "show active" );
+    }	
+	
+	$('#spotSelector option').removeAttr('selected');
+	$('#spotSelector').val(spotID);
+	selectSpotFromDropdown(spotID);		
+}
+//--SPOTS--
+
+//--DATA--
+function parseSpotData(spotID) {
+	if(!spotID) return;
+
+	if (!OBJECT_ANNOTATION.spots[spotID].data) {
+		loadJSON("diagnostic_template", "data/templates")
+            .then(data => {
+				SPOT_DATA = data;
+                buildConfigModal(spotID, SPOT_DATA.tabs)
+				    .then(() => {
+						fillConfigModal(spotID, SPOT_DATA.tabs)
+							.then(() => {
+								showConfig(spotID);
+							})
+							.catch(error => {
+								console.error('Error in fillConfigModal:', error);
+							});
+					})
+					.catch(error => {
+						console.error('Error in buildConfigModal:', error);
+					});
+            })
+            .catch(error => {
+                console.error('Error in parseSpotData:', error);
+            });
+	}
+	else {
+		SPOT_DATA.tabs = OBJECT_ANNOTATION.spots[spotID].data;
+		
+		buildConfigModal(spotID, SPOT_DATA.tabs)
+			.then(() => {
+				fillConfigModal(spotID, SPOT_DATA.tabs)
+					.then(() => {
+						showConfig(spotID);				
+					})
+					.catch(error => {
+						console.error('Error in fillConfigModal:', error);
+					});
+			})
+			.catch(error => {
+				console.error('Error in buildConfigModal:', error);
+			});
+	}
+}
+
+function updateSpotData(spotID) {
+	if(!spotID) return;
+
+	const spot = OBJECT_ANNOTATION.spots[spotID];
+
+	spot.data = SPOT_DATA.tabs;
+
+	for (const tabName in spot.data) {
+		const tabNameClean = tabName.replace(/\s+/g, '').toLowerCase();
+					
+		for (const sectionName in spot.data[tabName]) {
+			const section = spot.data[tabName][sectionName];
+			const sectionNameClean = sectionName.replace(/\s+/g, '').toLowerCase();
+
+			// update info object			
+			for (const fieldName in section) {
+				const field = section[fieldName];
+				if (field.type === 'text') {
+					const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}"]`);
+					spot.data[tabName][sectionName][fieldName].value = inputElement.val();
+				} else if (field.type === 'image') {
+					const images = Array.isArray(field.image) ? field.image : [field.image];														
+						
+					images.forEach((image, imageIndex) => {
+						const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}_image_${imageIndex}_URL"]`);
+						const captionInput = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}_image_${imageIndex}_caption"]`);		
+
+						if (Array.isArray(field.image)) {
+							spot.data[tabName][sectionName][fieldName].image[imageIndex].url = inputElement.val();					
+							spot.data[tabName][sectionName][fieldName].image[imageIndex].caption.value = captionInput.val();
+							if (image.caption.other && image.caption.other.type === 'table') {
+								const tableElement = $(`#${tabNameClean}_tab_content #${sectionNameClean}_${fieldName}_image_${imageIndex}_caption_table tbody`);
+								image.caption.other.rows.forEach((row, rowIndex) => {
+									row.forEach((cellText, cellIndex) => {
+										const inputElement = tableElement.find(`tr:eq(${rowIndex}) td:eq(${cellIndex}) input`);
+										spot.data[tabName][sectionName][fieldName].image[imageIndex].caption.other.rows[rowIndex][cellIndex].value = inputElement.val();
+									});
+								});
+							}				
+						} else {
+							spot.data[tabName][sectionName][fieldName].image.url = inputElement.val();
+							spot.data[tabName][sectionName][fieldName].image.caption.value = captionInput.val();
+							if (image.caption.other && image.caption.other.type === 'table') {
+								const tableElement = $(`#${tabNameClean}_tab_content #${sectionNameClean}_${fieldName}_image_${imageIndex}_caption_table tbody`);
+								image.caption.other.rows.forEach((row, rowIndex) => {
+									row.forEach((cellText, cellIndex) => {
+										const inputElement = tableElement.find(`tr:eq(${rowIndex}) td:eq(${cellIndex}) input`);
+										spot.data[tabName][sectionName][fieldName].image.caption.other.rows[rowIndex][cellIndex].value = inputElement.val();
+									});
+								});
+							}						
+						}						
+					});					
+				} else if (field.type === 'table') {		
+					const tableElement = $(`#${tabNameClean}_tab_content #${sectionNameClean}_${fieldName} tbody`);
+					field.rows.forEach((row, rowIndex) => {
+						row.forEach((cellText, cellIndex) => {
+							const inputElement = tableElement.find(`tr:eq(${rowIndex}) td:eq(${cellIndex}) input`);
+							spot.data[tabName][sectionName][fieldName].rows[rowIndex][cellIndex].value = inputElement.val();
+						});
+					});
+				} else if (field.type === 'download') {
+					const inputElement = $(`#${tabNameClean}_tab_content #${sectionNameClean} [name="${fieldName}"]`);
+					spot.data[tabName][sectionName][fieldName].url = inputElement.val();
+				} 
+			}				
+		}
+	}
+
+	$('#spotSelector option').removeAttr('selected');
+	$('#spotSelector').val(spotID);
+	selectSpotFromDropdown(spotID);	
+
+	toastr.success('Data successfully updated');
+}
+
+function selectSpotFromDropdown(spotID) {
+    if (!spotID) return;
+
+	buildDataPanelDetails(spotID)
+		.then(() => {
+			fillDataPanelDetails(spotID)		
+				.then(() => {
+					setupTabs('rr6');
+					})
+				.catch(error => {
+					console.error('Error in fillDataPanelDetails:', error);
+				});
+			})
+		.catch(error => {
+			console.error('Error in buildDataPanelDetails:', error);
+		});
+
+}
+//--DATA--
+
+//--NOTES--
+function updateObjectNotes(){
+	OBJECT_ANNOTATION.notes = document.getElementById("i_objectNotes").value;
+}
+//--NOTES--
+
+//--UTILITY--
+function convertToGlobal(trackState)
+{
+	var newstate=[];
+	// angles
+	newstate[0] = trackState[0];
+	newstate[1] = trackState[1];
+	// pan
+	newstate[2] = (trackState[2] / presenter.sceneRadiusInv) + presenter.sceneCenter[0];
+	newstate[3] = (trackState[3] / presenter.sceneRadiusInv) + presenter.sceneCenter[1];
+	newstate[4] = (trackState[4] / presenter.sceneRadiusInv) + presenter.sceneCenter[2];
+	//distance
+	newstate[5] = trackState[5] / presenter.sceneRadiusInv;
+	return newstate;
+}
+
+function convertToLocal(trackState)
+{
+	var newstate=[];
+	// angles
+	newstate[0] = trackState[0];
+	newstate[1] = trackState[1];
+	// pan
+	newstate[2] = (trackState[2] - presenter.sceneCenter[0]) * presenter.sceneRadiusInv;
+	newstate[3] = (trackState[3] - presenter.sceneCenter[1]) * presenter.sceneRadiusInv;
+	newstate[4] = (trackState[4] - presenter.sceneCenter[2]) * presenter.sceneRadiusInv;
+	//distance
+	newstate[5] = trackState[5] * presenter.sceneRadiusInv;
+	return newstate;
+}
+
+function track2view(trackState){
+	var view = {};
+	view.space = "object";
+	view.position = [0.0,0.0,0.0];
+	view.target = [0.0,0.0,0.0];
+	view.up = [0.0,0.0,0.0];
+	view.fov = 0.0;
+	// target is trackball center
+	view.target[0] = (trackState[2] / presenter.sceneRadiusInv) + presenter.sceneCenter[0];
+	view.target[1] = (trackState[3] / presenter.sceneRadiusInv) + presenter.sceneCenter[1];
+	view.target[2] = (trackState[4] / presenter.sceneRadiusInv) + presenter.sceneCenter[2];
+	// position is [0,0,distance], rotated on X and Y, added to target
+	var dist = trackState[5] / presenter.sceneRadiusInv;
+	var vp = [0.0, 0.0, dist, 1.0];
+	vp = SglMat4.mul4(SglMat4.rotationAngleAxis(sglDegToRad(trackState[1]), [-1.0, 0.0, 0.0]), vp);
+	vp = SglMat4.mul4(SglMat4.rotationAngleAxis(sglDegToRad(trackState[0]), [0.0, 1.0, 0.0]), vp);
+	view.position[0] = vp[0] + view.target[0];
+	view.position[1] = vp[1] + view.target[1];
+	view.position[2] = vp[2] + view.target[2];
+	// up is unit vertical vector, rotated on X and Y
+	var vu = [0.0, 1.0, 0.0, 1.0];
+	vu = SglMat4.mul4(SglMat4.rotationAngleAxis(sglDegToRad(trackState[1]), [-1.0, 0.0, 0.0]), vu);
+	vu = SglMat4.mul4(SglMat4.rotationAngleAxis(sglDegToRad(trackState[0]), [0.0, 1.0, 0.0]), vu);
+	view.up[0] = vu[0];
+	view.up[1] = vu[1];
+	view.up[2] = vu[2];
+	
+	if(presenter.getCameraType() == "orthographic")
+		view.fov = 0.0;
+	else
+		view.fov = presenter._scene.space.cameraFOV;
+	return view;
+}
+
+function view2track(view){
+	var trackState = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+	
+	trackState[2] = (view.target[0] - presenter.sceneCenter[0]) * presenter.sceneRadiusInv;
+	trackState[3] = (view.target[1] - presenter.sceneCenter[1]) * presenter.sceneRadiusInv;
+	trackState[4] = (view.target[2] - presenter.sceneCenter[2]) * presenter.sceneRadiusInv;
+	
+	var vdir = [(view.target[0]-view.position[0]), (view.target[1]-view.position[1]), (view.target[2]-view.position[2])];
+	var len = SglVec3.length(vdir);
+	vdir = [vdir[0] / len, vdir[1] / len, vdir[2] / len];
+	trackState[5] = len * presenter.sceneRadiusInv;
+
+	trackState[1] = sglRadToDeg(-Math.asin(vdir[1]));
+	trackState[0] = sglRadToDeg(Math.asin(-vdir[0] / Math.cos(Math.asin(-vdir[1]))));
+
+	if((trackState[1]<45.0)&&(trackState[1]>-45.0)){
+		trackState[0] = sglRadToDeg(Math.asin(-vdir[0] / Math.cos(Math.asin(-vdir[1]))));
+		if(vdir[2]>0.0) trackState[0] = 180.0 - trackState[0];
+	}
+	else // if tilt is large, better get heading from the up vector
+	{
+		trackState[0] = sglRadToDeg(Math.asin(-view.up[0] / Math.cos(Math.asin(-view.up[1]))));
+		if(view.up[2]>0.0) trackState[0] = 180.0 - trackState[0];
+	}
+
+	return trackState;
+}
+
+function color2Hex(color) {
+	let r = parseInt(color[0]*255);
+	let g = parseInt(color[1]*255);
+	let b = parseInt(color[2]*255);
+	return "#" + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0'); 
+}
+//--UTILITY--
+
+//--TAB SETUP--
+function setupTabs(containerID) {
+	var container = document.getElementById(containerID);
+	if (!container) return;
+
+	container.scrollTop = 0;
+
+	adjustCarouselControls(); 
+}
+//--TAB SETUP--
+
+//--CAROUSEL POSITIONING--
+function adjustCarouselControls() {
+    var carousels = document.querySelectorAll('.carousel.slide');
+	if (!carousels) return;
+    
+    carousels.forEach(function(carousel) {  
+		var tabPane = carousel.closest('.tab-pane');
+		if (tabPane && !tabPane.classList.contains('active')) return; 
+
+        var carouselInner = carousel.querySelector('.carousel-inner');
+        var activeItem = carousel.querySelector('.carousel-item.active');
+        
+        if (!activeItem) return;
+        
+        var image = activeItem.querySelector('img');
+        if (!image) return;
+        
+        if (image.offsetHeight === 0) {
+            setTimeout(adjustCarouselControls, 50);
+            return;
+        }
+        
+        var imageRect = image.getBoundingClientRect();
+        var carouselRect = carousel.getBoundingClientRect();
+        
+        var imageTop = imageRect.top - carouselRect.top;
+        var imageHeight = imageRect.height;
+        var imageCenter = imageTop + (imageHeight / 2);
+        var imageBottom = imageTop + imageHeight;		
+        
+        var controlsTop = imageCenter - 25;
+        var indicatorsTop = imageBottom - 30;
+        
+        var indicators = carousel.querySelector('.carousel-indicators');
+        var prevControl = carousel.querySelector('.carousel-control-prev');
+        var nextControl = carousel.querySelector('.carousel-control-next');
+        
+        if (indicators) {
+            indicators.style.position = 'absolute';
+            indicators.style.top = indicatorsTop + 'px';
+            indicators.style.bottom = 'auto';
+        }
+        
+        if (prevControl) {
+            prevControl.style.position = 'absolute';
+            prevControl.style.top = controlsTop + 'px';
+            prevControl.style.bottom = 'auto';
+            prevControl.style.height = '50px';
+        }
+        
+        if (nextControl) {
+            nextControl.style.position = 'absolute';
+            nextControl.style.top = controlsTop + 'px';
+            nextControl.style.bottom = 'auto';
+            nextControl.style.height = '50px';
+        }
+    });
+}
+//--CAROUSEL POSITIONING--
+
+//--AUTO RESIZE TEXTAREA--
+function resizeTextarea(textarea) {
+	if (textarea) {
+		textarea.style.height = 'auto';
+		textarea.style.height = Math.min(textarea.scrollHeight, 102) + 'px';
+		textarea.style.overflowY = textarea.scrollHeight > 102 ? 'auto' : 'hidden';		
+	} else {
+        var textareas = $(".auto-resize");
+        textareas.each(function() {
+            if ($(this).val() && $(this).val().trim() !== '') {
+                resizeTextarea(this);
+            }
+        });		
+	}
+}
+//--AUTO RESIZE TEXTAREA--
+
+//--PAGE RESIZE--
+function onPageResize(){
+	resizeCanvas($('#3dhop').parent().width(),$('#3dhop').parent().height());
+	if(presenter) presenter.repaint();
+
+    var totalHeight = $('#right_column').height();
+    var usedHeight = $('#rr1').outerHeight(true) + $('#rr3').outerHeight(true) + $('#rr4').outerHeight(true) + $('#rr5').outerHeight(true);
+    var remainingH = totalHeight - usedHeight;
+
+    $('#rr6').height(remainingH);
+    
+    if(remainingH < 200) {
+        $('#rr6').height(200);
+    }
+
+	adjustCarouselControls();
+}
+//--PAGE RESIZE--
+
+//--SCENE READY--
+function onSceneReady(){
+	var vv = presenter._scene.meshes[presenter._scene.modelInstances["model_instance"].mesh].renderable.mesh.basev;
+
+	if (typeof vv === 'undefined') {
+		setTimeout(onSceneReady, 100);
+	}
+	else {
+		// add startup grid
+		addGrid();
+		document.getElementById("i_grid").checked = true;
+
+		// setup auto load
+		loadJSON(objCode + "_sharable", "data/" + objCode)
+			.then(loadSetup)
+            .catch(error => {});
+	}
+}
+//--SCENE READY--
+
+//--URL PARAMETERS FETCH--
+function getProgTitleFromURL() {
+	const urlParams = new URLSearchParams(window.location.search);
+	return urlParams.get('progTitle');
+}
+
+function getProgSubtitleFromURL() {
+	const urlParams = new URLSearchParams(window.location.search);
+	return urlParams.get('progSubtitle');
+}
+
+function getObjCodeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('objCode');
+}
+//--URL PARAMETERS FETCH--
+
+//--DOC READY--
+$(document).ready(function(){
+    // Cache busting - JSON
+    var timestamp = new Date().getTime();
+    $.ajaxSetup({
+        cache: false,
+        beforeSend: function(xhr, settings) {
+            if (settings.url.indexOf('?') === -1) {
+                settings.url += '?v=' + timestamp;
+            } else {
+                settings.url += '&v=' + timestamp;
+            }
+        }
+    });
+
+	// crate 3dhop presenter
+	presenter = new Presenter("draw-canvas");
+
+	// in the annotation, I take note of which is the object
+	OBJECT_ANNOTATION.objectID = objCode;
+
+	// configuration
+	toastr.options = {
+		"positionClass": "toast-bottom-left",
+		"showDuration": "300",
+		"hideDuration": "300",
+		"timeOut": "2500",
+		"extendedTimeOut": "0"
+	}
+
+	// start tooltips
+//	$('[data-toggle="tooltip"]').tooltip({trigger : 'hover'});
+
+	// fill interface
+//	var progTitle = objCode.charAt(0).toUpperCase() + objCode.slice(1);
+	document.getElementById("sp_objDetails").innerHTML = "<h4><b>" + progTitle + "</b><br>" + progSubtitle + "</h4>";
+
+	document.title += " - " + progTitle;
+
+	fillNotesPanel();
+//	fillViewsPanel();
+	fillSpotsPanel();
+
+	// start viewer
+	init3dhop();
+	setup3dhop();
+
+	// nexus parameters
+//	presenter.setNexusTargetError(0.0);
+//	presenter.setNexusMaxCacheSize(1024*(1<<20)); //1GB
+
+	// initialization light component
+	setupLightController();
+
+	// display starting view state
+	displayViewState();
+
+	// resize all components
+	onPageResize();
+
+	// scene ready setup
+    onSceneReady();	
+});
+//--DOC READY--
+</script>
+</html>

@@ -1,0 +1,307 @@
+{
+  "ID": "",
+  "name": "",
+  "tabs": {
+    "Info": {
+      "Photographic documentation": {
+		  "images": {
+			  "type": "image",
+			  "label": "Photographic documentation",
+			  "image": [
+				{
+				  "label": "Sampling point",
+				  "url": "",
+				  "caption": {
+					  "value": "Sampling point",
+					  "other": {}
+				  }
+				},
+				{
+				  "label": "Sample detail",
+				  "url": "",
+				  "caption": {
+					  "value": "Sample detail",
+					  "other": {}
+				  }
+				}
+			  ]
+		  }
+	  },
+      "Macroscopic Description": {
+		  "type": {
+			  "type": "text",
+			  "label": "Mortar type",
+			  "value": ""
+		  },
+		  "function": {
+			  "type": "text",
+			  "label": "Mortar function",
+			  "value": ""
+		  },
+		  "thickness": {
+			  "type": "text",
+			  "label": "Thickness of the mortar layer",
+			  "value": ""
+		  },
+		  "color": {
+			  "type": "text",
+			  "label": "Mortar color (Munsell's Index)",
+			  "value": ""
+		  },
+		  "toughness": {
+			  "type": "text",
+			  "label": "Cohesion (toughness)",
+			  "value": ""
+		  },
+		  "aggregate_binder_ratio": {
+			  "type": "text",
+			  "label": "Aggregate to binder ratio estimation",
+			  "value": ""
+		  },
+		  "grain_size": {
+			  "type": "text",
+			  "label": "Grain size of aggregates",
+			  "value": ""
+		  },
+		  "particle_size_distribution": {
+			  "type": "text",
+			  "label": "Particle size distribution of aggregates",
+			  "value": ""
+		  },
+		  "roundness": {
+			  "type": "text",
+			  "label": "Morphology of aggregates (roundness)",
+			  "value": ""
+		  },
+		  "degradations": {
+			  "type": "text",
+			  "label": "Forms of degradation observed",
+			  "value": ""
+		  }
+	  },
+	  "Resources": {
+		  "documentation": {
+			  "type": "download",
+			  "label": "Download the complete report of diagnostics",
+			  "url": ""
+		  }
+	  }
+    },
+    "POM": {
+      "Polarizing Optical Microscopy": {
+		  "aggregate_binder_ratio": {
+			  "type": "text",
+			  "label": "Aggregate to binder ratio estimation",
+			  "value": ""
+		  },
+		  "binder": {
+			  "type": "text",
+			  "label": "Binder",
+			  "value": ""
+		  },
+		  "aggregates": {
+			  "type": "text",
+			  "label": "Aggregates",
+			  "value": ""
+		  },
+		  "porosity": {
+			  "type": "text",
+			  "label": "Porosity",
+			  "value": ""
+		  },
+		  "photomicrograph": {
+			  "type": "image",
+			  "label": "Photomicrograph of the sample",
+			  "image": [
+				{
+				  "label": "PPL",
+				  "url": "",
+				  "caption": {
+					  "value": "Photomicrograph of the sample at PPL",
+					  "other": {}
+				  }
+				},
+				{
+				  "label": "XPL",
+				  "url": "",
+				  "caption": {
+					  "value": "Photomicrograph of the sample at XPL",
+					  "other": {}
+				  }
+				}
+			  ]
+		  }
+	  }
+    },
+    "XRPD": {
+      "X-Ray Powder Diffraction": {
+		  "xrd_patterns": {
+			  "type": "image",
+			  "label": "XRD patterns",
+			  "image": [
+				{
+				  "label": "Bulk sample",
+				  "url": "",
+				  "caption": {
+					  "value": "XRD patterns of bulk sample",
+					  "other": {
+						  "type": "table",
+						  "border": false,
+						  "headers": [
+							{"editable": false, "value": "Abbreviation", "colspan": 1},
+							{"editable": false, "value": "Mineral", "colspan": 1},
+							{"editable": false, "value": "Abundance Scale", "colspan": 2}
+						  ],
+						  "rows": [
+							[{"editable": false, "value": "Plg"}, {"editable": false, "value": "Plagioclase"}, {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Au"},  {"editable": false, "value": "Augite"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ol"},  {"editable": false, "value": "Olivine"},     {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ca"},  {"editable": false, "value": "Calcite"},     {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Qtz"}, {"editable": false, "value": "Quartz"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "He"},  {"editable": false, "value": "Hematite"},    {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ti-mgt"}, {"editable": false, "value": "Titano-magnetite"}, {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Gy"},  {"editable": false, "value": "Gypsum"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Hl"},  {"editable": false, "value": "Halite"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Mu"},  {"editable": false, "value": "Muscovite"},   {"editable": true, "value": ""}, {"editable": true, "value": ""}]
+						  ]
+					  }
+				  }
+				},
+				{
+				  "label": "Binder",
+				  "url": "",
+				  "caption": {
+					  "value": "XRD patterns of binder",
+					  "other": {
+						  "type": "table",
+						  "border": false,
+						  "headers": [
+							{"editable": false, "value": "Abbreviation", "colspan": 1},
+							{"editable": false, "value": "Mineral", "colspan": 1},
+							{"editable": false, "value": "Abundance Scale", "colspan": 2}
+						  ],
+						  "rows": [
+							[{"editable": false, "value": "Plg"}, {"editable": false, "value": "Plagioclase"}, {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Au"},  {"editable": false, "value": "Augite"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ol"},  {"editable": false, "value": "Olivine"},     {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ca"},  {"editable": false, "value": "Calcite"},     {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Qtz"}, {"editable": false, "value": "Quartz"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "He"},  {"editable": false, "value": "Hematite"},    {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ti-mgt"}, {"editable": false, "value": "Titano-magnetite"}, {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Gy"},  {"editable": false, "value": "Gypsum"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Hl"},  {"editable": false, "value": "Halite"},      {"editable": true, "value": ""}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Mu"},  {"editable": false, "value": "Muscovite"},   {"editable": true, "value": ""}, {"editable": true, "value": ""}]
+						  ]
+					  }
+				  }
+				}
+			  ]
+		  }
+	  }
+    },
+    "FTIR": {
+      "Fourier-Transform Infrared Spectroscopy Analysis": {
+		  "binder_atr": {
+			  "type": "image",
+			  "label": "FTIR-ATR of the mortar binder",
+			  "image": {
+				  "url": "",
+				  "caption": {
+					  "value": "FTIR-ATR of the mortar binder",
+					  "other": {}
+				  }
+			  }
+		  },
+		  "water": {
+			  "type": "text",
+			  "label": "Water",
+			  "value": ""
+		  },
+		  "gypsum": {
+			  "type": "text",
+			  "label": "Gypsum",
+			  "value": ""
+		  },
+		  "calcite": {
+			  "type": "text",
+			  "label": "Calcite",
+			  "value": ""
+		  },
+		  "silicates": {
+			  "type": "text",
+			  "label": "Silicates",
+			  "value": ""
+		  },
+		  "hydrated_phases": {
+			  "type": "text",
+			  "label": "Hydrated Phases (CSH and CAH)",
+			  "value": ""
+		  }
+	  }
+    },
+    "XRF": {
+      "X-Ray Fluorescence": {
+		  "elements_concentration": {
+			  "type": "image",
+			  "label": "Concentrations of elements",
+			  "image": [
+				{
+				  "label": "Major elements",
+				  "url": "",
+				  "caption": {
+					  "value": "Concentrations of major elements (expressed in wt%)",
+					  "other": {
+						  "type": "table",
+						  "border": false,
+						  "headers": [
+							{"editable": false, "value": "Oxides", "colspan": 1},
+							{"editable": false, "value": "Concentration (wt%)", "colspan": 1}
+						  ],
+						  "rows": [
+							[{"editable": false, "value": "SiO2"},  {"editable": true, "value": ""}],
+							[{"editable": false, "value": "TiO2"},  {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Al2O3"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Fe2O3"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "MnO"},   {"editable": true, "value": ""}],
+							[{"editable": false, "value": "MgO"},   {"editable": true, "value": ""}],
+							[{"editable": false, "value": "CaO"},   {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Na2O"},  {"editable": true, "value": ""}],
+							[{"editable": false, "value": "K2O"},   {"editable": true, "value": ""}],
+							[{"editable": false, "value": "P2O5"},  {"editable": true, "value": ""}]
+						  ]
+					  }
+				  }
+				},
+				{
+				  "label": "Minor/trace elements",
+				  "url": "",
+				  "caption": {
+					  "value": "Concentrations of minor/trace elements (expressed in ppm)",
+					  "other": {
+						  "type": "table",
+						  "border": false,
+						  "headers": [
+							{"editable": false, "value": "Elements", "colspan": 1},
+							{"editable": false, "value": "Concentration (ppm)", "colspan": 1}
+						  ],
+						  "rows": [
+							[{"editable": false, "value": "Sr"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "V"},  {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Cr"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ni"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Rb"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Y"},  {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Zr"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Nb"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Ba"}, {"editable": true, "value": ""}],
+							[{"editable": false, "value": "Pb"}, {"editable": true, "value": ""}]
+						  ]
+					  }
+				  }
+				}
+			  ]
+		  }
+	  }
+    }
+  }
+}
