@@ -59,24 +59,18 @@ A demonstration video of the platform in action is available here:
 
 ## 🛠️ Installation & Usage
 
-The platform is **static** and can be deployed on any basic web server.
+The platform is **static** and can be deployed on a web server supporting **HTTP Range Requests** (needed for multiresolution 3D streaming) **and PHP** (for saving/loading diagnostic data).
 
-### Clone the repository
-```bash
+### ✅ Recommended setup (Apache + PHP via XAMPP/MAMP/WAMP)
+1. Install **XAMPP** (or **MAMP/WAMP** depending on your OS) and start the **Apache** service.
+2. Clone the repository in inside the server’s document root:
+```
+cd xampp\htdocs
 git clone https://github.com/cnr-isti-vclab/3DDDH.git
-cd 3DDDH
 ```
-
-### Run locally (simple option)
-Serve the folder through any static web server, e.g.:
-
-```bash
-python3 -m http.server 8000
+4. Visit:
 ```
-
-Then visit:
-```
-http://localhost:8000
+http://localhost/3DDDH/
 ```
 
 ---
@@ -101,7 +95,7 @@ This work has been developed within the project:
 
 **CHANGES – Cultural Heritage Active Innovation for Next‑Gen Sustainable Society**  
 PNRR – Mission 4 – Component 2 – Investment 1.3  
-Funded by the European Union – **NextGenerationEU**
+Funded by the European Union – NextGenerationEU
 
 ---
 
